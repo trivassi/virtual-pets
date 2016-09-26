@@ -6,11 +6,22 @@ public class Monster {
   private String name;
   private int personId;
   private int id;
+  private int foodLevel;
+  private int sleepLevel;
+  private int playLevel;
+
+  public static final int MAX_FOOD_LEVEL = 3;
+  public static final int MAX_SLEEP_LEVEL = 8;
+  public static final int MAX_PLAY_LEVEL = 12;
+  public static final int MIN_ALL_LEVELS = 0;
 
 
   public Monster(String name, int personId) {
     this.name = name;
     this.personId = personId;
+    playLevel = MAX_PLAY_LEVEL / 2;
+    sleepLevel = MAX_SLEEP_LEVEL / 2;
+    foodLevel = MAX_FOOD_LEVEL / 2;
   }
 
   public String getName(){
@@ -23,6 +34,18 @@ public class Monster {
 
   public int getId(){
     return id;
+  }
+
+  public int getPlayLevel(){
+    return playLevel;
+  }
+
+  public int getSleepLevel(){
+    return sleepLevel;
+  }
+
+  public int getFoodLevel(){
+    return foodLevel;
   }
 
   @Override
@@ -64,14 +87,31 @@ public class Monster {
     }
   }
 
-  public List<Monster> getMonsters() {
-    try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT * FROM monsters where personId=:id";
-      return con.createQuery(sql)
-        .addParameter("id", this.id)
-        .executeAndFetch(Monster.class);
+  public boolean isAlive() {
+    if (foodLevel <= MIN_ALL_LEVELS ||
+    playLevel <= MIN_ALL_LEVELS ||
+    sleepLevel <= MIN_ALL_LEVELS) {
+      return false;
     }
+    return true;
   }
 
+  public void depleteLevels(){
+    playLevel--;
+    foodLevel--;
+    sleepLevel--;
+    // Each time it runs, it will decrease the play, sleep, and food levels by 1.
+  }
 
+  public void play(){
+    playLevel++;
+  }
+
+  public void sleep(){
+    sleepLevel++;
+  }
+
+  public void feed(){
+    foodLevel++;
+  }
 }
