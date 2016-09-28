@@ -10,18 +10,18 @@ public class Monster {
   private int sleepLevel;
   private int playLevel;
 
-  public static final int MAX_FOOD_LEVEL = 3;
-  public static final int MAX_SLEEP_LEVEL = 8;
-  public static final int MAX_PLAY_LEVEL = 12;
-  public static final int MIN_ALL_LEVELS = 0;
+  public static final MAX_FOOD_LEVEL = 3;
+  public static final MAX_SLEEP_LEVEL = 8;
+  public static final MAX_PLAY_LEVEL = 12;
+  public static final MIN_ALL_LEVELS = 0;
 
 
   public Monster(String name, int personId) {
     this.name = name;
     this.personId = personId;
-    playLevel = MAX_PLAY_LEVEL / 2;
-    sleepLevel = MAX_SLEEP_LEVEL / 2;
-    foodLevel = MAX_FOOD_LEVEL / 2;
+    this.playLevel = MAX_PLAY_LEVEL / 2;
+    this.sleepLevel =   MAX_SLEEP_LEVEL / 2;
+    this.foodLevel = MAX_FOOD_LEVEL / 2;
   }
 
   public String getName(){
@@ -36,15 +36,15 @@ public class Monster {
     return id;
   }
 
-  public int getPlayLevel(){
+  public int getPlayLevel() {
     return playLevel;
   }
 
-  public int getSleepLevel(){
+  public int getSleepLevel() {
     return sleepLevel;
   }
 
-  public int getFoodLevel(){
+  public int getFoodLevel() {
     return foodLevel;
   }
 
@@ -89,38 +89,29 @@ public class Monster {
 
   public boolean isAlive() {
     if (foodLevel <= MIN_ALL_LEVELS ||
-    playLevel <= MIN_ALL_LEVELS ||
-    sleepLevel <= MIN_ALL_LEVELS) {
+        playLevel <= MIN_ALL_LEVELS ||
+        sleepLevel <= MIN_ALL_LEVELS) {
       return false;
+    } else {
+      return true;
     }
-    return true;
   }
 
-  public void depleteLevels(){
+  public void depleteLevels() {
     playLevel--;
     foodLevel--;
     sleepLevel--;
-    // Each time it runs, it will decrease the play, sleep, and food levels by 1.
   }
 
-  public void play(){
-    if (playLevel >= MAX_PLAY_LEVEL){
-      throw new UnsupportedOperationException("You cannot play with monster anymore!");
-    }
+  public void play() {
     playLevel++;
   }
 
-  public void sleep(){
-    if (sleepLevel >= MAX_SLEEP_LEVEL){
-      throw new UnsupportedOperationException("You cannot make your monster sleep anymore!");
-    }
+  public void sleep() {
     sleepLevel++;
   }
 
-  public void feed(){
-    if (foodLevel >= MAX_FOOD_LEVEL){
-      throw new UnsupportedOperationException("You cannot feed your monster anymore!");
-    }
+  public void feed() {
     foodLevel++;
   }
 

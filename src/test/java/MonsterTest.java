@@ -72,8 +72,15 @@ public class MonsterTest {
 
   @Test
   public void monster_instantiatesWithHalfFullPlayLevel(){
+  Monster testMonster = new Monster("Bubbles", 1);
+  assertEquals(testMonster.getPlayLevel(), (Monster.MAX_PLAY_LEVEL / 2 ));
+  // instead of using a number value here, we simply refer to the MAX_PLAY_LEVEL constant. That way, if we later want to alter these constants, we won't need to manually update each
+  }
+
+  @Test
+  public void monster_instantiatesWithHalfFullSleepLevel(){
     Monster testMonster = new Monster("Bubbles", 1);
-    assertEquals(testMonster.getPlayLevel(), (Monster.MAX_PLAY_LEVEL / 2));
+    assertEquals(testMonster.getSleepLevel(), (Monster.MAX_SLEEP_LEVEL / 2));
   }
 
   @Test
@@ -87,32 +94,30 @@ public class MonsterTest {
     Monster testMonster = new Monster("Bubbles", 1);
     assertEquals(testMonster.isAlive(), true);
   }
+  //ASSERTRUE can be used??
 
   @Test
   public void depleteLevels_reducesAllLevels(){
     Monster testMonster = new Monster("Bubbles", 1);
-    testMonster.depleteLevels();
-    assertEquals(testMonster.getFoodLevel(), (Monster.MAX_FOOD_LEVEL / 2) - 1);
-    assertEquals(testMonster.getSleepLevel(), (Monster.MAX_SLEEP_LEVEL / 2) - 1);
-    assertEquals(testMonster.getPlayLevel(), (Monster.MAX_PLAY_LEVEL / 2) - 1);
-    // Each time it runs, it will decrease the play, sleep, and food levels by 1.
+    assertEquals(testMonster.depleteLevels(), (Monster.MAX_FOOD_LEVEL / 2) -1);
+    assertEquals(testMonster.depleteLevels(), (Monster.MAX_SLEEP_LEVEL / 2) -1);
+    assertEquals(testMonster.depleteLevels(), (Monster.MAX_PLAY_LEVEL / 2) -1);
   }
 
   @Test
   public void isAlive_recognizesMonsterIsDeadWhenLevelsReachMinimum_false(){
     Monster testMonster = new Monster("Bubbles", 1);
-    for(int i = Monster.MIN_ALL_LEVELS; i <= Monster.MAX_FOOD_LEVEL; i++){
+    for (int i = Monster.MIN_ALL_LEVELS; i <= MAX_PLAY_LEVEL; i++) {
       testMonster.depleteLevels();
     }
-    assertEquals(testMonster.isAlive(), false);
+    assertEquals(testMonster.isAlive(), true);
   }
-  //The necessary number of times to make at least one level reach the minimum.
+// use our constants in a loop. This ensures we call depleteLevels() the necessary number of times to make at least one level reach the minimum
 
-  @Test
   public void play_increasesMonsterPlayLevel(){
     Monster testMonster = new Monster("Bubbles", 1);
     testMonster.play();
-    assertTrue(testMonster.getPlayLevel() > (Monster.MAX_PLAY_LEVEL / 2));
+    assertTrue(testMonster.play() > (Monster.MAX_PLAY_LEVEL / 2));
   }
 
   @Test
@@ -132,49 +137,10 @@ public class MonsterTest {
   @Test
   public void monster_foodLevelCannotGoBeyondMaxValue(){
     Monster testMonster = new Monster("Bubbles", 1);
-    for(int i = Monster.MIN_ALL_LEVELS; i <= (Monster.MAX_FOOD_LEVEL); i++){
-      try {
-        testMonster.feed();
-      } catch (UnsupportedOperationException exception){ }
+    for (int i = Monster.MIN_ALL_LEVELS;i <= (MAX_FOOD_LEVEL + 2) ; i++ ) {
+      testMonster.feed();
     }
-    assertTrue(testMonster.getFoodLevel() <= Monster.MAX_FOOD_LEVEL);
+    assertTrue(testMonster.)
   }
 
-  @Test(expected = UnsupportedOperationException.class)
-  public void play_throwsExceptionIfPlayLevelIsAtMaxValue(){
-    Monster testMonster = new Monster("Bubbles", 1);
-    for(int i = Monster.MIN_ALL_LEVELS; i <= (Monster.MAX_PLAY_LEVEL); i++){
-      testMonster.play();
-    }
-  }
-
-  @Test
-  public void monster_playLevelCannotGoBeyondMaxValue(){
-    Monster testMonster = new Monster("Bubbles", 1);
-    for(int i = Monster.MIN_ALL_LEVELS; i <= (Monster.MAX_PLAY_LEVEL); i++){
-      try {
-        testMonster.play();
-      } catch (UnsupportedOperationException exception){ }
-    }
-    assertTrue(testMonster.getPlayLevel() <= Monster.MAX_PLAY_LEVEL);
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void sleep_throwsExceptionIfSleepLevelIsAtMaxValue(){
-    Monster testMonster = new Monster("Bubbles", 1);
-    for(int i = Monster.MIN_ALL_LEVELS; i <= (Monster.MAX_SLEEP_LEVEL); i++){
-      testMonster.sleep();
-    }
-  }
-
-  @Test
-  public void monster_sleepLevelCannotGoBeyondMaxValue(){
-    Monster testMonster = new Monster("Bubbles", 1);
-    for(int i = Monster.MIN_ALL_LEVELS; i <= (Monster.MAX_SLEEP_LEVEL); i++){
-      try {
-        testMonster.sleep();
-      } catch (UnsupportedOperationException exception){ }
-    }
-    assertTrue(testMonster.getSleepLevel() <= Monster.MAX_SLEEP_LEVEL);
-  }
 }
