@@ -1,6 +1,9 @@
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.sql2o.*;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.text.DateFormat;
 
 public class MonsterTest {
 
@@ -99,15 +102,16 @@ public class MonsterTest {
   @Test
   public void depleteLevels_reducesAllLevels(){
     Monster testMonster = new Monster("Bubbles", 1);
-    assertEquals(testMonster.depleteLevels(), (Monster.MAX_FOOD_LEVEL / 2) -1);
-    assertEquals(testMonster.depleteLevels(), (Monster.MAX_SLEEP_LEVEL / 2) -1);
-    assertEquals(testMonster.depleteLevels(), (Monster.MAX_PLAY_LEVEL / 2) -1);
+    testMonster.depleteLevels();
+    assertEquals(testMonster.getFoodLevel(), (Monster.MAX_FOOD_LEVEL / 2) -1);
+    assertEquals(testMonster.getSleepLevel(), (Monster.MAX_SLEEP_LEVEL / 2) -1);
+    assertEquals(testMonster.getPlayLevel(), (Monster.MAX_PLAY_LEVEL / 2) -1);
   }
 
   @Test
   public void isAlive_recognizesMonsterIsDeadWhenLevelsReachMinimum_false(){
     Monster testMonster = new Monster("Bubbles", 1);
-    for (int i = Monster.MIN_ALL_LEVELS; i <= MAX_PLAY_LEVEL; i++) {
+    for (int i = Monster.MIN_ALL_LEVELS; i <= Monster.MAX_PLAY_LEVEL; i++) {
       testMonster.depleteLevels();
     }
     assertEquals(testMonster.isAlive(), true);
@@ -117,7 +121,7 @@ public class MonsterTest {
   public void play_increasesMonsterPlayLevel(){
     Monster testMonster = new Monster("Bubbles", 1);
     testMonster.play();
-    assertTrue(testMonster.play() > (Monster.MAX_PLAY_LEVEL / 2));
+    assertTrue(testMonster.getPlayLevel() > (Monster.MAX_PLAY_LEVEL / 2));
   }
 
   @Test
@@ -137,12 +141,12 @@ public class MonsterTest {
   @Test
   public void monster_foodLevelCannotGoBeyondMaxValue(){
     Monster testMonster = new Monster("Bubbles", 1);
-    for (int i = Monster.MIN_ALL_LEVELS;i <= (MAX_FOOD_LEVEL + 2) ; i++ ) {
+    for (int i = Monster.MIN_ALL_LEVELS;i <= (Monster.MAX_FOOD_LEVEL + 2) ; i++ ) {
       try {
         testMonster.feed();
       } catch (UnsupportedOperationException exception) { }
     }
-    assertTrue(testMonster.getFoodLevel() <= Monster.MAX_FOOD_LEVEL)
+    assertTrue(testMonster.getFoodLevel() <= Monster.MAX_FOOD_LEVEL);
   }
   // We don't want our pet's foodLevel to surpass 3
 
@@ -169,12 +173,12 @@ public class MonsterTest {
   @Test
   public void monster_playLevelCannotGoBeyondMaxValue() {
     Monster testMonster = new Monster("Bubbles", 1);
-    for (int i = Monster.MIN_ALL_LEVELS;i <= MAX_PLAY_LEVEL; i++ ) {
+    for (int i = Monster.MIN_ALL_LEVELS;i <= Monster.MAX_PLAY_LEVEL; i++ ) {
       try {
         testMonster.play();
       } catch (UnsupportedOperationException exception) { }
     }
-    assertTrue(testMonster.getPlayLevel() <= Monster.MAX_PLAY_LEVEL)
+    assertTrue(testMonster.getPlayLevel() <= Monster.MAX_PLAY_LEVEL);
   }
 
   @Test(expected = UnsupportedOperationException.class)
@@ -194,5 +198,47 @@ public class MonsterTest {
       } catch (UnsupportedOperationException exception) { }
       assertTrue(testMonster.getSleepLevel() <= Monster.MAX_SLEEP_LEVEL);
     }
+  }
+
+  @Test public void save_recordsTimeOfCreationInDatabase() {
+    Monster testMonster = new Monster("Bubbles", 1);
+    testMonster.save();
+    Timestamp savedMonsterBirthday = Monster.find(testMonster.getId()).getBirthday();
+    Timestamp rightNow = new Timestamp(new Date().getTime());
+    assertEquals(rightNow.getDay(), savedMonsterBirthday.getDay());
+  }
+  //when we create a new monster, the birthday value inserted into our database reflects the current time
+  //we construct a sample Timestamp object for comparison, providing a new Date object as an argument to the Timestamp constructor
+
+
+  @Test
+  public void sleep_recordsTimeLastSleptInDatabase() {
+    Monster testMonster = new Monster("Bubbles", 1);
+    testMonster.save();
+    testMonster.sleep();
+    Timestamp savedMonsterLastSlept = Monster.find(testMonster.getId()).getLastSlept();
+    Timestamp rightNow = new Timestamp(new Date().getTime());
+    assertEquals(DateFormat.getDateTimeInstance().format(rightNow), DateFormat.getDateTimeInstance().format(savedMonsterLastSlept));
+  }
+
+  @Test
+  public void feed_recordsTimeLastAteInDatabase() {
+    Monster testMonster = new Monster("Bubbles", 1);
+    testMonster.save();
+    testMonster.feed();
+    Timestamp savedMonsterLastAte = Monster.find(testMonster.getId()).getLastAte();
+    Timestamp rightNow = new Timestamp(new Date().getTime());
+    assertEquals(DateFormat.getDateTimeInstance().format(rightNow), DateFormat.getDateTimeInstance().format(savedMonsterLastAte));
+  }
+
+  @Test
+  public void play_recordsTimeLastPlayedInDatabase() {
+    Monster testMonster = new Monster("Bubbles", 1);
+    testMonster.save();
+    testMonster.play();
+    Timestamp savedMonsterLastPlayed = Monster.find(testMonster.getId()).getLastPlayed();
+    Timestamp rightNow = new Timestamp(new Date().getTime());
+    assertEquals(DateFormat.getDateTimeInstance().format(rightNow), DateFormat.getDateTimeInstance().format(savedMonsterLastPlayed));
+  }
 
 }
